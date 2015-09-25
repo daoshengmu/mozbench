@@ -35,7 +35,6 @@ from subprocess import call
 from shutil import rmtree
 from resultRecorder import ResultRecorder
 
-# INFLUXDB_URL = 'http://54.215.155.53:8086/db/mozbench/series?'
 INFLUXDB_URL = 'http://moztwlab-02:8086/db/mozbench/series?'
 
 headers = None
@@ -202,7 +201,7 @@ def runtest(logger, runner, timeout):
 
 def postresults(logger, results):
 
-    secret_path = os.path.join(os.path.expanduser('~'), 'influxdb-secret.txt')
+    secret_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'influxdb-secret.txt')
     if not os.path.isfile(secret_path):
         logger.error('could not post results: secrets file: %s not found' % secret_path)
         return
