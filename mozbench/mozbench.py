@@ -35,7 +35,8 @@ from subprocess import call
 from shutil import rmtree
 from resultRecorder import ResultRecorder
 
-INFLUXDB_URL = 'http://54.215.155.53:8086/db/mozbench/series?'
+# INFLUXDB_URL = 'http://54.215.155.53:8086/db/mozbench/series?'
+INFLUXDB_URL = 'http://moztwlab-02:8086/db/mozbench/series?'
 
 headers = None
 results = None
