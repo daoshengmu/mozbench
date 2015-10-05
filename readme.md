@@ -27,7 +27,7 @@ To run the benchmarks, activate your virtual environment as described above
 and run the mozbench.py script from the mozbench directory:
 
     cd mozbench
-    python mozbench.py --firefox-url <url> --chrome-path <path> --log-mach=-
+    python mozbench.py --firefox-path <path> --chrome-path <path> --log-mach=-
 
 For the firefox url, you can use a file:// url which points to the firefox
 installer rather than downloading it from an external location.
@@ -46,7 +46,7 @@ updated through the normal chrome update channels.
 
 To run the benchmarks on android, without chrome:
 
-    python mozbench.py --firefox-url <url> --log-mach=-
+    python mozbench.py --firefox-path <path> --log-mach=-
 
 The firefox url should point to a fennec apk in this case. To run the benchmarks
 on android with chrome installed, the chrome path is the name of the chrome
