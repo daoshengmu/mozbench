@@ -1,4 +1,6 @@
 import copy
+import re
+import time
 
 class ResultRecorder(object):
 
@@ -50,10 +52,11 @@ class ResultRecorder(object):
         self.current_benchmark['results'].append(copy.copy(results))
 
     def get_influxdb_results(self):
-        results_to_return = []
+        results_to_return = ''
         platform = self.platform
         osVersion = self.os_version
         processor = self.processor
+        timestamp = str(int(time.time()*1000000000)) # The time precision of InfluxDB is nanoseconds
 
         for browser_name in self.browsers:
             browser = self.browsers[browser_name]
@@ -69,13 +72,15 @@ class ResultRecorder(object):
                         name = single_case[result_name]
                         value = single_case[result_value_name]
 
-                        table = 'benchmarks.' + '.'.join([bench_name, name, platform, browser_name])
-                        result_point = {
-                                'name': table,
-                                'columns': ['value','browser-version', 'os-version', 'processor'],
-                                'points': [[value, browser_version, osVersion, processor]]
-                        }
-                        results_to_return.append(result_point)
+                        series = 'benchmarks.' + '.'.join([bench_name, name, platform, browser_name])
+                        # Measurement names, tag keys, and tag values must escape any spaces or commas using a backslash.
+                        series = re.sub('[ =,]', r'\\', series)
+                        osVersion = re.sub('[ =,]', r'\\', osVersion)
+
+                        tag = 'browser-version=' + browser_version + ',os-version=' + osVersion + ',processor=' + processor
+                        val = 'value=' + str(value)
+                        result_point = series + ',' + tag + ' ' + val + ' ' + timestamp + '\n'
+                        results_to_return += result_point
 
         return results_to_return
 
