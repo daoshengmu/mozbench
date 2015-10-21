@@ -57,6 +57,8 @@ class ResultRecorder(object):
         osVersion = self.os_version
         processor = self.processor
         timestamp = str(int(time.time()*1000000000)) # The time precision of InfluxDB is nanoseconds
+        # Measurement names, tag keys, and tag values must escape any spaces using a backslash.
+        osVersion = osVersion.replace(' ', '\ ') # TODO: comma and equal should be handled as well
 
         for browser_name in self.browsers:
             browser = self.browsers[browser_name]
@@ -73,9 +75,7 @@ class ResultRecorder(object):
                         value = single_case[result_value_name]
 
                         series = 'benchmarks.' + '.'.join([bench_name, name, platform, browser_name])
-                        # Measurement names, tag keys, and tag values must escape any spaces or commas using a backslash.
-                        series = re.sub('[ =,]', r'\\', series)
-                        osVersion = re.sub('[ =,]', r'\\', osVersion)
+                        series = series.replace(' ', '\ ')
 
                         tag = 'browser-version=' + browser_version + ',os-version=' + osVersion + ',processor=' + processor
                         val = 'value=' + str(value)
