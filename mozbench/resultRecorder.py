@@ -1,5 +1,4 @@
 import copy
-import re
 import time
 
 class ResultRecorder(object):
@@ -57,8 +56,7 @@ class ResultRecorder(object):
         osVersion = self.os_version
         processor = self.processor
         timestamp = str(int(time.time()*1000000000)) # The time precision of InfluxDB is nanoseconds
-        # Measurement names, tag keys, and tag values must escape any spaces using a backslash.
-        osVersion = osVersion.replace(' ', '\ ') # TODO: comma and equal should be handled as well
+        device = platform
 
         for browser_name in self.browsers:
             browser = self.browsers[browser_name]
@@ -73,15 +71,16 @@ class ResultRecorder(object):
                     for single_case in result:
                         name = single_case[result_name]
                         value = single_case[result_value_name]
+                        series = 'benchmarks'
 
-                        series = 'benchmarks.' + '.'.join([bench_name, name, platform, browser_name])
-                        series = series.replace(' ', '\ ')
+                        tag = 'bench-name=' + bench_name + ',name=' + name + ',device=' + device + ',platform=' \
+                            + platform + ',browser-version=' + browser_version + ',os-version=' + osVersion + ',processor=' + processor
+                        # Measurement names, tag keys, and tag values must escape any spaces using a backslash.
+                        tag = tag.replace(' ', '\ ') # TODO: comma and equal should be handled as well
 
-                        tag = 'browser-version=' + browser_version + ',os-version=' + osVersion + ',processor=' + processor
-                        val = 'value=' + str(value)
+                        val = 'value=' + str(int(value))
                         result_point = series + ',' + tag + ' ' + val + ' ' + timestamp + '\n'
                         results_to_return += result_point
-
         return results_to_return
 
     def get_results(self):
