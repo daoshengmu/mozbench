@@ -78,8 +78,13 @@ class ResultRecorder(object):
                         # Measurement names, tag keys, and tag values must escape any spaces using a backslash.
                         tag = tag.replace(' ', '\ ') # TODO: comma and equal should be handled as well
 
-                        val = 'value=' + str(int(value))
-                        result_point = series + ',' + tag + ' ' + val + ' ' + timestamp + '\n'
+                        # The schema of influxDB v0.9 only accepts number for field key value
+                        if isinstance(value, float):
+                            value_str = 'value=' + str(value)
+                        else:
+                            value_str = 'value=' + str(int(value))
+
+                        result_point = series + ',' + tag + ' ' + value_str + ' ' + timestamp + '\n'
                         results_to_return += result_point
         return results_to_return
 
