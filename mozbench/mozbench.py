@@ -212,7 +212,7 @@ def postresults(logger, results):
             headers = {'X-Requested-With': 'Python requests', 'Content-type': 'text/xml'}
             influxdb_url = 'http://' + url + '/write?db=' + dbtable
             r = requests.post(influxdb_url + '&u=' + user + '&p=' + passwd,
-                            data=results, headers=headers)
+                              data=results, headers=headers)
             logger.info('results posted: %s: %s' % (r.status_code, r.text))
             break
         except requests.exceptions.ConnectionError:
